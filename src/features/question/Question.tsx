@@ -5,14 +5,14 @@ import { QuestionContent } from './QuestionContent';
 
 
 type Props = QuestionType & {
-	editable: boolean;
+	previewMode: boolean;
 	onTitleUpdate: (newTitle: string) => void;
 	onValueChange: (newValue: any) => void; // TODO: replace any with generic
 }
 
-export const Question = ({ editable, title, onTitleUpdate, content, onValueChange }: Props) => (
+export const Question = ({ previewMode, title, onTitleUpdate, content, onValueChange }: Props) => (
 	<div>
-		<input type="text" disabled={!editable} value={title} onChange={(e) => onTitleUpdate(e.target.type)} />
-		<QuestionContent editable={editable} content={content} onValueChange={onValueChange} />
+		<input type="text" disabled={!previewMode} value={title} onChange={(e) => onTitleUpdate(e.target.value)} />
+		<QuestionContent editable={!previewMode} content={content} onValueChange={onValueChange} />
 	</div>
 );

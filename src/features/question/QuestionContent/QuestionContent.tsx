@@ -16,7 +16,7 @@ const StringQuestionContent = ({ editable, content, onValueChange }: StringProps
 
 type NumberProps = Omit<Props, 'content'> & { content: NumberQuestionContentType }
 const NumberQuestionContent = ({ editable, content, onValueChange }: NumberProps) => (
-	<input type="number" value={content.value} onChange={(e) => onValueChange(e.target.value)} disabled={!editable} />
+	<input type="number" value={content.value ?? undefined} onChange={(e) => onValueChange(e.target.value)} disabled={!editable} />
 );
 
 export const QuestionContent = ({ editable, content, onValueChange }: Props) => {

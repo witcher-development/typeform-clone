@@ -4,7 +4,11 @@
     "paths": {
       "@router": ["./router"],
       "@env": ["./env.ts"],
-      "@common/*": ["./features/common/*"]
+      "@common/*": ["./features/common/*"],
+      "@question": ["./features/question/index"],
+      "@question/*": ["./features/question/*"],
+      "@builder": ["./features/builder/index"],
+      "@builder/*": ["./features/builder/*"]
     }
   }
 }
