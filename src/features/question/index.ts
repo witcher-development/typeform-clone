@@ -1,6 +1,5 @@
 export * from './Question';
-export * from './types';
-export * from './emptyQuestion';
+export * from './model';
 
 export * from './QuestionContent';
 export * from './QuestionTypeSelect';

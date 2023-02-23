@@ -1,3 +1,2 @@
-export * from './types';
+export * from './model';
 export * from './QuestionContent';
-export * from './emptyContent';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { QuestionContentTypes, StringQuestionContentType, NumberQuestionContentType } from './types';
+import { QuestionContentTypes, StringQuestionContentType, NumberQuestionContentType } from './model';
 
 
 type Props = {

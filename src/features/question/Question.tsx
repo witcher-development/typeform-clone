@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { QuestionType } from './types';
+import { QuestionType } from './model';
 import { QuestionContent } from './QuestionContent';
 
 
