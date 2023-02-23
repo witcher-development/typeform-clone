@@ -1,20 +1,20 @@
 import React from 'react';
 
-import { QuestionContentTypes, StringQuestionContentType, NumberQuestionContentType } from './model';
+import * as QuestionContentModel from './model';
 
 
 type Props = {
 	editable: boolean;
-	content: QuestionContentTypes;
-	onValueChange: (newValue: QuestionContentTypes['value']) => void;
+	content: QuestionContentModel.Content;
+	onValueChange: (newValue: QuestionContentModel.Content['value']) => void;
 }
 
-type StringProps = Omit<Props, 'content'> & { content: StringQuestionContentType }
+type StringProps = Omit<Props, 'content'> & { content: QuestionContentModel.StringContent }
 const StringQuestionContent = ({ editable, content, onValueChange }: StringProps) => (
 	<input type="text" value={content.value} onChange={(e) => onValueChange(e.target.value)} disabled={!editable} />
 );
 
-type NumberProps = Omit<Props, 'content'> & { content: NumberQuestionContentType }
+type NumberProps = Omit<Props, 'content'> & { content: QuestionContentModel.NumberContent }
 const NumberQuestionContent = ({ editable, content, onValueChange }: NumberProps) => (
 	<input type="number" value={content.value ?? undefined} onChange={(e) => onValueChange(e.target.value)} disabled={!editable} />
 );

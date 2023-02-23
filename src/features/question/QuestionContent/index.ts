@@ -1,2 +1,2 @@
-export * from './model';
+export * as QuestionContentModel from './model';
 export * from './QuestionContent';

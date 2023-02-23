@@ -1,15 +1,16 @@
 import React from 'react';
 
-import { QuestionContentTypeNames } from '@question/QuestionContent';
+import { QuestionContentModel } from '../QuestionContent';
 
-export const questionTypeNameMap = new Map<QuestionContentTypeNames, string>([
+
+export const questionTypeNameMap = new Map<QuestionContentModel.ContentTypes, string>([
 	['string', 'Text'],
 	['number', 'Number'],
 	['multiSelect', 'Multiple Choice'],
 ]);
 
 type Props = {
-	onSelect: (type: QuestionContentTypeNames) => void;
+	onSelect: (type: QuestionContentModel.ContentTypes) => void;
 };
 
 export const QuestionTypeSelect = ({ onSelect }: Props) => (

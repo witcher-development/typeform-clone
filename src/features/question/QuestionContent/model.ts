@@ -1,8 +1,8 @@
-export type StringQuestionContentType = {
+export type StringContent = {
 	type: 'string';
 	value: string;
 }
-export type NumberQuestionContentType = {
+export type NumberContent = {
 	type: 'number';
 	value: number | null;
 }
@@ -10,29 +10,29 @@ export type MultiSelectOption = {
 	name: string;
 	checked: boolean;
 }
-export type MultiSelectQuestionContentType = {
+export type MultiSelectContent = {
 	type: 'multiSelect';
 	value: Map<string, MultiSelectOption>;
 }
 
-export type QuestionContentTypes = StringQuestionContentType | NumberQuestionContentType | MultiSelectQuestionContentType;
+export type Content = StringContent | NumberContent | MultiSelectContent;
 
-export type QuestionContentTypeNames = QuestionContentTypes['type'];
+export type ContentTypes = Content['type'];
 
-const stringQuestionEmptyContent = (): StringQuestionContentType => ({
+const stringQuestionEmptyContent = (): StringContent => ({
 	type: 'string',
 	value: '',
 });
-const numberQuestionEmptyContent = (): NumberQuestionContentType => ({
+const numberQuestionEmptyContent = (): NumberContent => ({
 	type: 'number',
 	value: null,
 });
-const multiSelectQuestionEmptyContent = (): MultiSelectQuestionContentType => ({
+const multiSelectQuestionEmptyContent = (): MultiSelectContent => ({
 	type: 'multiSelect',
 	value: new Map(),
 });
 
-export const getEmptyContentByType = (type: QuestionContentTypeNames): QuestionContentTypes => {
+export const getEmptyContent = (type: ContentTypes): Content => {
 	switch (type) {
 		case 'string':
 			return stringQuestionEmptyContent();

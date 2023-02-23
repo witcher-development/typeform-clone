@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 
-import { Question, QuestionType, QuestionTypeSelect, QuestionContentTypeNames, getNewQuestion } from '@question';
+import { Question, QuestionTypeSelect, QuestionModel, QuestionContentModel } from '@question';
 
 
 export const BuilderPage = () => {
-	const [questions, setQuestions] = useState<QuestionType[]>([]);
+	const [questions, setQuestions] = useState([]);
 
-	const addQuestionByType = (type: QuestionContentTypeNames) => {
-		setQuestions([...questions, getNewQuestion(type)]);
+	const addQuestionByType = (type: QuestionContentModel.ContentTypes) => {
+		// setQuestions([...questions, QuestionModel.getNewQuestion(type)]);
 	};
 
 	const updateQuestionTitle = (title: string, id: string) => {
-		setQuestions(questions.map((q) => id === q.id ? { ...q, title } : q));
+		// setQuestions(questions.map((q) => id === q.id ? { ...q, title } : q));
 	};
 
 	return (
 		<div>
 			<QuestionTypeSelect onSelect={addQuestionByType} />
-			{questions.map(({ id, title, content }) => (
+			{questions.map(({ id, name, content }) => (
 				<Question
 					key={id}
 					id={id}
-					title={title}
+					name={name}
 					content={content}
 					onTitleUpdate={(title) => updateQuestionTitle(title, id)}
 					onValueChange={() => null}
