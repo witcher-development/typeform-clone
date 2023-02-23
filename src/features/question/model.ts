@@ -11,7 +11,7 @@ export type QuestionType = {
 	content: QuestionContentTypes;
 }
 
-export const getEmptyQuestion = (type: QuestionContentTypeNames): QuestionType => ({
+export const getNewQuestion = (type: QuestionContentTypeNames): QuestionType => ({
 	id: uuid(),
 	title: '',
 	content: getEmptyContentByType(type)

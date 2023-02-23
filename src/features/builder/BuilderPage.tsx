@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-import { Question, QuestionType, QuestionTypeSelect, QuestionContentTypeNames, getEmptyQuestion } from '@question';
+import { Question, QuestionType, QuestionTypeSelect, QuestionContentTypeNames, getNewQuestion } from '@question';
 
 
 export const BuilderPage = () => {
 	const [questions, setQuestions] = useState<QuestionType[]>([]);
 
 	const addQuestionByType = (type: QuestionContentTypeNames) => {
-		setQuestions([...questions, getEmptyQuestion(type)]);
+		setQuestions([...questions, getNewQuestion(type)]);
 	};
 
 	const updateQuestionTitle = (title: string, id: string) => {
