@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Question, QuestionTypeSelect, QuestionModel, QuestionContentModel } from '@question';
+import { QuestionModel, QuestionContentModel, Question, QuestionTypeSelect } from '@question';
 
 
-export const BuilderPage = () => {
-	const [questions, setQuestions] = useState([]);
+type Props = {
+	questions: QuestionModel.Question[]
+}
 
+export const BuilderPage = ({ questions }: Props) => {
 	const addQuestionByType = (type: QuestionContentModel.ContentTypes) => {
 		// setQuestions([...questions, QuestionModel.getNewQuestion(type)]);
 	};

@@ -2,13 +2,15 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
+      "@client": ["./client"],
       "@router": ["./router"],
       "@env": ["./env.ts"],
       "@common/*": ["./features/common/*"],
       "@question": ["./features/question/index"],
-      "@question/*": ["./features/question/*"],
+      "@survey": ["./features/survey/index"],
       "@builder": ["./features/builder/index"],
-      "@builder/*": ["./features/builder/*"]
+      "@home": ["./features/homePage/index"],
+      "@surveyPage": ["./features/surveyPage/index"]
     }
   }
 }

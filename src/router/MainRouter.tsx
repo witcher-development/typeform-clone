@@ -1,14 +1,17 @@
 import React, { ReactNode } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { Paths } from '@router';
-import { BuilderPage } from '@builder';
+import { HomePage } from '@home';
+import { SurveyPage } from '@surveyPage';
+
+import { Paths } from './paths';
 
 
 export const routes = new Map<Paths, {
   element: ReactNode
 }>([
-	['/', { element: <BuilderPage /> }],
+	['/', { element: <HomePage /> }],
+	['/surveys/:id', { element: <SurveyPage /> }],
 ]);
 
 export const MainRouter = () => (

@@ -1,3 +1,6 @@
-type HomePagePath = '/';
+type PathParam = string;
 
-export type Paths = HomePagePath;
+type HomePagePath = '/';
+type SurveyPagePath = `/surveys/${PathParam}`;
+
+export type Paths = HomePagePath | SurveyPagePath;
