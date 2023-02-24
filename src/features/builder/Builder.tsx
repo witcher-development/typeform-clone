@@ -9,6 +9,7 @@ type Props = {
 
 export const Builder = ({ surveyId }: Props) => {
 	const { data: questions, status } = QuestionLogic.useGetQuestions(surveyId);
+	const createQuestion = QuestionLogic.useCreateQuestion(surveyId);
 
 	if (status !== 'success') {
 		return <p>not loaded</p>;
@@ -16,17 +17,22 @@ export const Builder = ({ surveyId }: Props) => {
 
 	return (
 		<div>
-			{/* <QuestionTypeSelect onSelect={addQuestionByType} /> */}
-			{questions.map(({ id, name, content }) => (
-				<Question
-					key={id}
-					id={id}
-					name={name}
-					content={content}
-					onTitleUpdate={() => null}
-					onValueChange={() => null}
-					previewMode={true}
-				/>
+			<QuestionTypeSelect onSelect={createQuestion} />
+			{questions.map(({ id, name, content }, i) => (
+				<>
+					{id}
+					<Question
+						// it should be index, but not ID, because when optimistic update finishes
+						// it will change the ID and re-create component (might lose input focus)
+						key={i}
+						id={id}
+						name={name}
+						content={content}
+						onTitleUpdate={() => null}
+						onValueChange={() => null}
+						previewMode={true}
+					/>
+				</>
 			))}
 		</div>
 	);

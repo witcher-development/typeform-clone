@@ -10,6 +10,7 @@ module.exports = function override (config) {
 		'@builder': 'src/features/builder',
 		'@home': 'src/features/homePage',
 		'@client': 'src/client.ts',
+		'@store': 'src/store.ts',
 		'@router': 'src/router',
 		'@env': 'src/env.ts',
 	})(config);

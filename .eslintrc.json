@@ -43,6 +43,9 @@
             "indentLogicalExpressions": true
         }],
         "@typescript-eslint/ban-ts-comment": "off",
+        "max-len": ["warn", {
+            "code": 120
+        }],
         "object-curly-spacing": ["warn", "always"],
         "quotes": ["warn", "single"],
         "for-direction": 1,
@@ -134,7 +137,7 @@
             "SwitchCase": 1
         }],
         "function-paren-newline": ["warn", "multiline"],
-        "implicit-arrow-linebreak": [1, "beside"],
+        "implicit-arrow-linebreak": 0,
         "no-console": 1,
         "no-eval": 1,
         "no-trailing-spaces": 1,

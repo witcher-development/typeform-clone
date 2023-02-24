@@ -5,6 +5,7 @@
       "@client": ["./client"],
       "@router": ["./router"],
       "@env": ["./env.ts"],
+      "@store": ["./store.ts"],
       "@common/*": ["./features/common/*"],
       "@question": ["./features/question/index"],
       "@survey": ["./features/survey/index"],

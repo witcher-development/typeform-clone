@@ -1,11 +1,9 @@
 import React from 'react';
 import { RecoilRoot } from 'recoil';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 
 import { MainRouter } from '@router';
-
-
-const queryClient = new QueryClient();
+import { queryClient } from '@store';
 
 
 export const App = () => (
