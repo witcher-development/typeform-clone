@@ -2,10 +2,10 @@ import React from 'react';
 import {
 	useParams
 } from 'react-router-dom';
-import { useQuery } from 'react-query';
 
 import { useNavigate } from '@common/Navigation';
-import { SurveyApi } from '@survey';
+import { SurveyLogic } from '@survey';
+import { Builder } from '@builder';
 
 
 export const SurveyPage = () => {
@@ -15,18 +15,16 @@ export const SurveyPage = () => {
 		redirect('/');
 		return <></>;
 	}
-	const { data: survey, isLoading, isError } = useQuery(['surveys', id], () => SurveyApi.getOne(id));
+	const { data: survey, status } = SurveyLogic.useGetSurvey(id);
 
-	if (isLoading) {
-		return <p>loading</p>;
-	}
-	if (isError) {
-		return <p>error</p>;
+	if (status !== 'success') {
+		return <p>not loaded</p>;
 	}
 
 	return (
 		<div>
-			{survey?.name}
+			{survey.name}
+			<Builder surveyId={survey.id} />
 		</div>
 	);
 };

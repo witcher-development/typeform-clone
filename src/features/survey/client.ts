@@ -4,7 +4,7 @@ import { client } from '@client';
 import * as SurveyModel from './model';
 
 
-export const url = (u: string) => `/surveys/${u}`;
+const url = (u: string) => `/surveys/${u}`;
 
 const mapDataToSurveys = (data: any): SurveyModel.Survey[] => data.map(mapDataToSurvey);
 const mapDataToSurvey = (data: any): SurveyModel.Survey => ({
