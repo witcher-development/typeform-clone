@@ -6,7 +6,7 @@ import { QuestionContentModel } from '../QuestionContent';
 export const questionTypeNameMap = new Map<QuestionContentModel.ContentTypes, string>([
 	['string', 'Text'],
 	['number', 'Number'],
-	['multiSelect', 'Multiple Choice'],
+	['multi-select', 'Multiple Choice'],
 ]);
 
 type Props = {

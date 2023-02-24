@@ -1,10 +1,10 @@
 import React from 'react';
 
-import * as Model from './model';
+import * as QuestionModel from './model';
 import { QuestionContent } from './QuestionContent';
 
 
-type Props = Model.Question & {
+type Props = QuestionModel.Question & {
 	previewMode: boolean;
 	onTitleUpdate: (newTitle: string) => void;
 	onValueChange: (newValue: any) => void; // TODO: replace any with generic

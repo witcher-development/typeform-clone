@@ -11,7 +11,7 @@ export type MultiSelectOption = {
 	checked: boolean;
 }
 export type MultiSelectContent = {
-	type: 'multiSelect';
+	type: 'multi-select';
 	value: Map<string, MultiSelectOption>;
 }
 
@@ -28,7 +28,7 @@ const numberQuestionEmptyContent = (): NumberContent => ({
 	value: null,
 });
 const multiSelectQuestionEmptyContent = (): MultiSelectContent => ({
-	type: 'multiSelect',
+	type: 'multi-select',
 	value: new Map(),
 });
 
@@ -38,7 +38,7 @@ export const getEmptyContent = (type: ContentTypes): Content => {
 			return stringQuestionEmptyContent();
 		case 'number':
 			return numberQuestionEmptyContent();
-		case 'multiSelect':
+		case 'multi-select':
 			return multiSelectQuestionEmptyContent();
 		default:
 			throw new Error('Unknown question type while generating empty question content');

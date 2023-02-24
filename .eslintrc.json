@@ -155,6 +155,7 @@
                 "newlines-between": "always"
             }
         ],
-        "import/newline-after-import": ["warn", { "count": 2 }]
+        "import/newline-after-import": ["warn", { "count": 2 }],
+        "@typescript-eslint/no-explicit-any": 0
     }
 }

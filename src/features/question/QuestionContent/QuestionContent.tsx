@@ -25,7 +25,7 @@ export const QuestionContent = ({ editable, content, onValueChange }: Props) => 
 			return <StringQuestionContent editable={editable} content={content} onValueChange={onValueChange} />;
 		case 'number':
 			return <NumberQuestionContent editable={editable} content={content} onValueChange={onValueChange}/>;
-		case 'multiSelect':
+		case 'multi-select':
 			return <></>;
 		default:
 			throw new Error('unknown question content type');
