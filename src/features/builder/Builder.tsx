@@ -19,12 +19,10 @@ export const Builder = ({ surveyId }: Props) => {
 		<div>
 			<QuestionTypeSelect onSelect={createQuestion} />
 			{questions.map(({ id, name, content }, i) => (
-				<>
-					{id}
+				// it should be index, but not ID, because when optimistic update finishes
+				// it will change the ID and re-create component (might lose input focus)
+				<div key={i}>
 					<Question
-						// it should be index, but not ID, because when optimistic update finishes
-						// it will change the ID and re-create component (might lose input focus)
-						key={i}
 						id={id}
 						name={name}
 						content={content}
@@ -32,7 +30,7 @@ export const Builder = ({ surveyId }: Props) => {
 						onValueChange={() => null}
 						previewMode={true}
 					/>
-				</>
+				</div>
 			))}
 		</div>
 	);

@@ -6,9 +6,22 @@ import { QuestionContentModel } from './QuestionContent';
 
 const url = (surveyId: string, id = '') => `/surveys/${surveyId}/questions/${id}`;
 
-// TODO: handle multi-options case
-const mapDataToQuestionContent = (data: any): QuestionContentModel.Content =>
-	QuestionContentModel.getEmptyContent(data.type);
+const mapDataToQuestionContent = (data: any): QuestionContentModel.Content => {
+	switch (data.type) {
+		case 'string':
+		case 'number': {
+			return QuestionContentModel.getEmptyContent(data.type);
+		}
+		case 'multi-select': {
+			return {
+				type: 'multi-select',
+				value: new Map(data.options.map(({ id, name }: any) => [id, { name, checked: false }]))
+			};
+		}
+		default:
+			throw new Error('Unknown question type while mapping question content to API');
+	}
+};
 const mapDataToQuestion = (data: any): QuestionModel.Question => ({
 	id: data.id,
 	name: data.name,
