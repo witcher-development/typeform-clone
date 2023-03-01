@@ -1,6 +1,5 @@
-import { logger } from 'react-query/types/react/logger';
 import { v4 as uuid } from 'uuid';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, UseMutationOptions, useQuery } from 'react-query';
 
 import { queryClient } from '@store';
 
@@ -41,7 +40,7 @@ export const useCreateQuestion = (surveyId: string) => {
 			// Return a context object with the snapshotted value
 			return { optimisticQuestion };
 		},
-		onSuccess: (result, variables, context) => {
+		onSuccess: (result, vars, context) => {
 			if (!context) {
 				throw new Error('Context is not found when performing optimistic update');
 			}
@@ -121,5 +120,45 @@ export const useUpdateQuestion = (surveyId: string) => {
 
 	return (question: QuestionModel.Question) =>
 		mutate({ surveyId, question });
+};
+
+export const useRemoveQuestion = (surveyId: string) => {
+	const { mutate } = useMutation<
+		unknown,
+		unknown,
+		QuestionApi.RemoveProps,
+		{ questionsBackup: QuestionModel.Question[] }
+	>({
+		mutationFn: QuestionApi.remove,
+		mutationKey: questionsKey(surveyId),
+		onMutate: async ({ surveyId, id }) => {
+			// Cancel any outgoing refetches, so they don't overwrite our optimistic update
+			await queryClient.cancelQueries({ queryKey: questionsKey(surveyId) });
+			const questionsBackup = queryClient.getQueryData(questionsKey(surveyId));
+
+			// Optimistic removal
+			queryClient.setQueryData<QuestionModel.Question[]>(
+				questionsKey(surveyId),
+				(old) => (old || []).filter((q) => q.id !== id)
+			);
+
+			return { questionsBackup };
+		},
+		onError: (err, vars, context) => {
+			if (!context) {
+				throw new Error('Context is not found when performing optimistic update');
+			}
+
+			// Restore from backup
+			queryClient.setQueryData<QuestionModel.Question[]>(
+				questionsKey(surveyId),
+				context.questionsBackup
+			);
+			queryClient.invalidateQueries(questionsKey(surveyId));
+		},
+	} as UseMutationOptions<unknown, unknown,	QuestionApi.RemoveProps, { questionsBackup: QuestionModel.Question[] }>);
+
+	return (id: string) =>
+		mutate({ surveyId, id });
 };
 

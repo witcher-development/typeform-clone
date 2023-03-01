@@ -77,3 +77,10 @@ export type UpdateProps = {
 export const update = ({ surveyId, question }: UpdateProps) =>
 	client.patch(url(surveyId, question.id), mapQuestionToData(question))
 		.then((res) => mapDataToQuestion(res.data));
+
+
+export type RemoveProps = {
+	surveyId: string;
+	id: string;
+}
+export const remove = ({ surveyId, id }: RemoveProps) => client.delete(url(surveyId, id));

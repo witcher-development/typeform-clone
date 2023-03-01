@@ -11,6 +11,7 @@ export const Builder = ({ surveyId }: Props) => {
 	const { data: questions, status } = QuestionLogic.useGetQuestions(surveyId);
 	const createQuestion = QuestionLogic.useCreateQuestion(surveyId);
 	const updateQuestion = QuestionLogic.useUpdateQuestion(surveyId);
+	const removeQuestion = QuestionLogic.useRemoveQuestion(surveyId);
 
 	if (status !== 'success') {
 		return <p>not loaded</p>;
@@ -26,6 +27,7 @@ export const Builder = ({ surveyId }: Props) => {
 					<Question
 						question={question}
 						onUpdate={updateQuestion}
+						onRemove={removeQuestion}
 						editorMode={true}
 					/>
 				</div>

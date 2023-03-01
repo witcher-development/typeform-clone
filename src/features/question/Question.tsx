@@ -8,9 +8,10 @@ type Props = {
 	editorMode: boolean;
 	question: QuestionModel.Question;
 	onUpdate: (newContent: QuestionModel.Question) => void;
+	onRemove: (id: string) => void;
 }
 
-export const Question = ({ editorMode, question, onUpdate }: Props) => {
+export const Question = ({ editorMode, question, onUpdate, onRemove }: Props) => {
 	const { id, name, content } = question;
 
 	const update = (newData: Partial<QuestionModel.Question>) => {
@@ -29,6 +30,7 @@ export const Question = ({ editorMode, question, onUpdate }: Props) => {
 				content={content}
 				onUpdate={(newContent) => update({ content: newContent })}
 			/>
+			{editorMode && <button onClick={() => onRemove(id)}>Delete</button>}
 		</div>
 	);
 };
