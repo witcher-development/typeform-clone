@@ -1,5 +1,5 @@
-import { v4 as uuid } from 'uuid';
 import { useMutation, UseMutationOptions, useQuery } from 'react-query';
+import { AxiosError } from 'axios';
 
 import { queryClient } from '@store';
 
@@ -16,68 +16,47 @@ export const useGetQuestions = (surveyId: string) =>
 export const useCreateQuestion = (surveyId: string) => {
 	const { mutate } = useMutation<
 		QuestionModel.Question,
-		unknown,
+		AxiosError,
 		QuestionApi.CreateProps,
-		{ optimisticQuestion: QuestionModel.Question }
+		{ question: QuestionModel.Question }
 	>({
 		mutationFn: QuestionApi.create,
-		onMutate: async ({ surveyId, newQuestion }) => {
+		onMutate: async ({ surveyId, question }) => {
 			// Cancel any outgoing refetches, so they don't overwrite our optimistic update
 			await queryClient.cancelQueries({ queryKey: questionsKey(surveyId) });
-
-			// Create optimistic question
-			const optimisticQuestion = {
-				...newQuestion,
-				id: uuid()
-			};
 
 			// Optimistically update to the new value
 			queryClient.setQueryData<QuestionModel.Question[]>(
 				questionsKey(surveyId),
-				(old) => [...(old || []), optimisticQuestion]
+				(old) => [...(old || []), question]
 			);
 
 			// Return a context object with the snapshotted value
-			return { optimisticQuestion };
+			return { question };
 		},
-		onSuccess: (result, vars, context) => {
+		onError: (err, vars, context) => {
 			if (!context) {
 				throw new Error('Context is not found when performing optimistic update');
 			}
-			const { optimisticQuestion } = context;
-			// Replace optimistic question with the result
-			queryClient.setQueryData<QuestionModel.Question[]>(
-				questionsKey(surveyId),
-				(old) =>
-					Array.isArray(old)
-						? old.map((question) => question.id === optimisticQuestion.id ? result : question)
-						: [result]
-			);
-		},
-		onError: (err, { surveyId }, context) => {
-			if (!context) {
-				throw new Error('Context is not found when performing optimistic update');
+
+			if (err.response?.status !== 409) {
+				// TODO: handle error
 			}
-			const { optimisticQuestion } = context;
-			// Delete optimistic question when mutation failed
-			queryClient.setQueryData<QuestionModel.Question[]>(
-				questionsKey(surveyId),
-				(old) =>
-					Array.isArray(old)
-						? old.filter((question) => question.id !== optimisticQuestion.id)
-						: []
-			);
+
+			// TODO: handle duplicated ID case
+
+			throw new Error('Unhandled question create request error');
 		},
 	});
 
 	return (type: QuestionContentModel.ContentTypes) =>
-		mutate({ surveyId, newQuestion: QuestionModel.getNewQuestion(type) });
+		mutate({ surveyId, question: QuestionModel.getNewQuestion(type) });
 };
 
 export const useUpdateQuestion = (surveyId: string) => {
 	const { mutate } = useMutation<
 		QuestionModel.Question,
-		unknown,
+		AxiosError,
 		QuestionApi.UpdateProps
 	>({
 		mutationFn: QuestionApi.update,
@@ -92,29 +71,10 @@ export const useUpdateQuestion = (surveyId: string) => {
 				(old) => (old || []).map((q) => q.id === question.id ? question : q)
 			);
 		},
-		onSuccess: (result, { question }) => {
-			const mutationsNumber = queryClient.isMutating({
-				predicate: ({ options }) => options.variables.question.id === question.id
-			});
-			if (mutationsNumber > 1) {
-				return;
-			}
+		onError: () => {
+			// TODO: handle error
 
-			queryClient.setQueryData<QuestionModel.Question[]>(
-				questionsKey(surveyId),
-				(old) => (old || []).map((q) => q.id === question.id ? result : q)
-			);
-		},
-		onError: (err, { surveyId, question }) => {
-			// Delete optimistic question when mutation failed
-			queryClient.setQueryData<QuestionModel.Question[]>(
-				questionsKey(surveyId),
-				(old) =>
-					Array.isArray(old)
-						? old.filter((q) => q.id !== question.id)
-						: []
-			);
-			queryClient.invalidateQueries(questionsKey(surveyId));
+			throw new Error('Unhandled question create request error');
 		},
 	});
 
@@ -125,7 +85,7 @@ export const useUpdateQuestion = (surveyId: string) => {
 export const useRemoveQuestion = (surveyId: string) => {
 	const { mutate } = useMutation<
 		unknown,
-		unknown,
+		AxiosError,
 		QuestionApi.RemoveProps,
 		{ questionsBackup: QuestionModel.Question[] }
 	>({
@@ -155,8 +115,10 @@ export const useRemoveQuestion = (surveyId: string) => {
 				context.questionsBackup
 			);
 			queryClient.invalidateQueries(questionsKey(surveyId));
+
+			// TODO: Additionally show some toast
 		},
-	} as UseMutationOptions<unknown, unknown,	QuestionApi.RemoveProps, { questionsBackup: QuestionModel.Question[] }>);
+	} as UseMutationOptions<unknown, AxiosError,	QuestionApi.RemoveProps, { questionsBackup: QuestionModel.Question[] }>);
 
 	return (id: string) =>
 		mutate({ surveyId, id });

@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { QuestionContentModel } from './QuestionContent';
 
 
@@ -6,9 +7,9 @@ export type Question = {
 	name: string;
 	content: QuestionContentModel.Content;
 }
-export type NewQuestion = Omit<Question, 'id'>
 
-export const getNewQuestion = (type: QuestionContentModel.ContentTypes): NewQuestion => ({
+export const getNewQuestion = (type: QuestionContentModel.ContentTypes): Question => ({
+	id: uuid(),
 	name: '',
 	content: QuestionContentModel.getEmptyContent(type)
 });

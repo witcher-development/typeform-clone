@@ -1,3 +1,6 @@
+import { v4 as uuid } from 'uuid';
+
+
 export type StringContent = {
 	type: 'string';
 	value: string;
@@ -7,7 +10,7 @@ export type NumberContent = {
 	value: number | null;
 }
 export type MultiSelectOption = {
-	id?: string;
+	id: string;
 	name: string;
 	checked: boolean;
 }
@@ -29,6 +32,7 @@ const numberQuestionEmptyContent = (): NumberContent => ({
 	value: null,
 });
 export const getEmptyMultiSelectOption = (): MultiSelectOption => ({
+	id: uuid(),
 	name: '',
 	checked: false,
 });
