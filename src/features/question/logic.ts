@@ -1,3 +1,4 @@
+import { logger } from 'react-query/types/react/logger';
 import { v4 as uuid } from 'uuid';
 import { useMutation, useQuery } from 'react-query';
 
@@ -42,7 +43,7 @@ export const useCreateQuestion = (surveyId: string) => {
 		},
 		onSuccess: (result, variables, context) => {
 			if (!context) {
-				throw new Error('Context is "undefined" when performing optimistic update');
+				throw new Error('Context is not found when performing optimistic update');
 			}
 			const { optimisticQuestion } = context;
 			// Replace optimistic question with the result
@@ -56,7 +57,7 @@ export const useCreateQuestion = (surveyId: string) => {
 		},
 		onError: (err, { surveyId }, context) => {
 			if (!context) {
-				throw new Error('Context is "undefined" when performing optimistic update');
+				throw new Error('Context is not found when performing optimistic update');
 			}
 			const { optimisticQuestion } = context;
 			// Delete optimistic question when mutation failed
@@ -72,5 +73,53 @@ export const useCreateQuestion = (surveyId: string) => {
 
 	return (type: QuestionContentModel.ContentTypes) =>
 		mutate({ surveyId, newQuestion: QuestionModel.getNewQuestion(type) });
+};
+
+export const useUpdateQuestion = (surveyId: string) => {
+	const { mutate } = useMutation<
+		QuestionModel.Question,
+		unknown,
+		QuestionApi.UpdateProps
+	>({
+		mutationFn: QuestionApi.update,
+		mutationKey: questionsKey(surveyId),
+		onMutate: async ({ surveyId, question }) => {
+			// Cancel any outgoing refetches, so they don't overwrite our optimistic update
+			await queryClient.cancelQueries({ queryKey: questionsKey(surveyId) });
+
+			// Optimistically update to the new value
+			queryClient.setQueryData<QuestionModel.Question[]>(
+				questionsKey(surveyId),
+				(old) => (old || []).map((q) => q.id === question.id ? question : q)
+			);
+		},
+		onSuccess: (result, { question }) => {
+			const mutationsNumber = queryClient.isMutating({
+				predicate: ({ options }) => options.variables.question.id === question.id
+			});
+			if (mutationsNumber > 1) {
+				return;
+			}
+
+			queryClient.setQueryData<QuestionModel.Question[]>(
+				questionsKey(surveyId),
+				(old) => (old || []).map((q) => q.id === question.id ? result : question)
+			);
+		},
+		onError: (err, { surveyId, question }) => {
+			// Delete optimistic question when mutation failed
+			queryClient.setQueryData<QuestionModel.Question[]>(
+				questionsKey(surveyId),
+				(old) =>
+					Array.isArray(old)
+						? old.filter((q) => q.id !== question.id)
+						: []
+			);
+			queryClient.invalidateQueries(questionsKey(surveyId));
+		},
+	});
+
+	return (question: QuestionModel.Question) =>
+		mutate({ surveyId, question });
 };
 

@@ -3,47 +3,95 @@ import React from 'react';
 import * as QuestionContentModel from './model';
 
 
-type Props = {
-	editable: boolean;
-	content: QuestionContentModel.Content;
-	onValueChange: (newValue: QuestionContentModel.Content['value']) => void;
+type SubProps<T extends QuestionContentModel.Content> = {
+	editorMode: boolean;
+	value: T['value'];
+	onUpdate: (newValue: T['value']) => void;
 }
 
-type StringProps = Omit<Props, 'content'> & { content: QuestionContentModel.StringContent }
-const StringQuestionContent = ({ editable, content, onValueChange }: StringProps) => (
-	<input type="text" value={content.value} onChange={(e) => onValueChange(e.target.value)} disabled={!editable} />
+type StringProps = SubProps<QuestionContentModel.StringContent>
+const StringQuestionContent = ({ editorMode, value, onUpdate }: StringProps) => (
+	<input type="text" value={value} onChange={(e) => onUpdate(e.target.value)} disabled={editorMode} />
 );
 
-type NumberProps = Omit<Props, 'content'> & { content: QuestionContentModel.NumberContent }
-const NumberQuestionContent = ({ editable, content, onValueChange }: NumberProps) => (
+type NumberProps = SubProps<QuestionContentModel.NumberContent>
+const NumberQuestionContent = ({ editorMode, value, onUpdate }: NumberProps) => (
 	<input
 		type="number"
-		value={content.value ?? undefined}
-		onChange={(e) => onValueChange(e.target.value)}
-		disabled={!editable}
+		value={value ?? undefined}
+		onChange={(e) => onUpdate(+e.target.value)}
+		disabled={editorMode}
 	/>
 );
 
-type MultiSelectProps = Omit<Props, 'content' | 'onValueChange'> & { content: QuestionContentModel.MultiSelectContent }
-const MultiSelectQuestionContent = ({ editable, content }: MultiSelectProps) => (
+type MultiSelectOptionProps = {
+	editorMode: boolean;
+	value: QuestionContentModel.MultiSelectOption;
+	onUpdate: (newValue: QuestionContentModel.MultiSelectOption) => void;
+}
+const MultiSelectOption = ({ editorMode, value, onUpdate }: MultiSelectOptionProps) => (
 	<div>
-		{Array.from(content.value).map(([id, { name }]) => (
-			<div key={id}>
-				<p>{name}</p>
-				<input value={id} type="checkbox" disabled={!editable} />
-			</div>
-		))}
+		<input
+			type="text"
+			value={value.name}
+			onChange={(e) => onUpdate({ ...value, name: e.target.value })}
+			disabled={!editorMode}
+		/>
+		<input value={value.id} type="checkbox" checked={value.checked} disabled={editorMode} />
 	</div>
 );
 
-export const QuestionContent = ({ editable, content, onValueChange }: Props) => {
+type MultiSelectProps = SubProps<QuestionContentModel.MultiSelectContent>
+const MultiSelectQuestionContent = ({ editorMode, value, onUpdate }: MultiSelectProps) => {
+	const updateOption = (updatedOption: QuestionContentModel.MultiSelectOption) => {
+		onUpdate(value.map((option) => option.id === updatedOption.id ? updatedOption : option));
+	};
+
+	return (
+		<div>
+			{value.map((option, index) => (
+				// it should be index, but not ID, because when optimistic update finishes
+				// it will change the ID and re-create component (might lose input focus)
+				<MultiSelectOption editorMode={editorMode} value={option} onUpdate={updateOption} key={index} />
+			))}
+			{editorMode && (
+				<button
+					onClick={() => onUpdate([...value, QuestionContentModel.getEmptyMultiSelectOption()])}
+				>
+					Add option
+				</button>
+			)}
+		</div>
+	);
+};
+
+type Props = {
+	editorMode: boolean;
+	content: QuestionContentModel.Content;
+	onUpdate: (newContent: QuestionContentModel.Content) => void;
+}
+
+
+export const QuestionContent = ({ editorMode, content, onUpdate }: Props) => {
 	switch (content.type) {
 		case 'string':
-			return <StringQuestionContent editable={editable} content={content} onValueChange={onValueChange} />;
+			return <StringQuestionContent
+				editorMode={editorMode}
+				value={content.value}
+				onUpdate={(value) => onUpdate({ type: content.type, value })}
+			/>;
 		case 'number':
-			return <NumberQuestionContent editable={editable} content={content} onValueChange={onValueChange}/>;
+			return <NumberQuestionContent
+				editorMode={editorMode}
+				value={content.value}
+				onUpdate={(value) => onUpdate({ type: content.type, value })}
+			/>;
 		case 'multi-select':
-			return <MultiSelectQuestionContent editable={editable} content={content} />;
+			return <MultiSelectQuestionContent
+				editorMode={editorMode}
+				value={content.value}
+				onUpdate={(value) => onUpdate({ type: content.type, value })}
+			/>;
 		default:
 			throw new Error('unknown question content type');
 	}

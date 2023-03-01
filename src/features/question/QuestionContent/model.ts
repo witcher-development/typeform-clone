@@ -7,12 +7,13 @@ export type NumberContent = {
 	value: number | null;
 }
 export type MultiSelectOption = {
+	id?: string;
 	name: string;
 	checked: boolean;
 }
 export type MultiSelectContent = {
 	type: 'multi-select';
-	value: Map<string, MultiSelectOption>;
+	value: MultiSelectOption[];
 }
 
 export type Content = StringContent | NumberContent | MultiSelectContent;
@@ -27,9 +28,13 @@ const numberQuestionEmptyContent = (): NumberContent => ({
 	type: 'number',
 	value: null,
 });
+export const getEmptyMultiSelectOption = (): MultiSelectOption => ({
+	name: '',
+	checked: false,
+});
 const multiSelectQuestionEmptyContent = (): MultiSelectContent => ({
 	type: 'multi-select',
-	value: new Map(),
+	value: [],
 });
 
 export const getEmptyContent = (type: ContentTypes): Content => {

@@ -4,15 +4,31 @@ import * as QuestionModel from './model';
 import { QuestionContent } from './QuestionContent';
 
 
-type Props = QuestionModel.Question & {
-	previewMode: boolean;
-	onTitleUpdate: (newTitle: string) => void;
-	onValueChange: (newValue: any) => void; // TODO: replace any with generic
+type Props = {
+	editorMode: boolean;
+	question: QuestionModel.Question;
+	onUpdate: (newContent: QuestionModel.Question) => void;
 }
 
-export const Question = ({ previewMode, name, onTitleUpdate, content, onValueChange }: Props) => (
-	<div>
-		<input type="text" disabled={!previewMode} value={name} onChange={(e) => onTitleUpdate(e.target.value)} />
-		<QuestionContent editable={!previewMode} content={content} onValueChange={onValueChange} />
-	</div>
-);
+export const Question = ({ editorMode, question, onUpdate }: Props) => {
+	const { id, name, content } = question;
+
+	const update = (newData: Partial<QuestionModel.Question>) => {
+		onUpdate({
+			...question,
+			...newData
+		});
+	};
+
+	return (
+		<div>
+			{id}
+			<input type="text" disabled={!editorMode} value={name} onChange={(e) => update({ name: e.target.value })} />
+			<QuestionContent
+				editorMode={editorMode}
+				content={content}
+				onUpdate={(newContent) => update({ content: newContent })}
+			/>
+		</div>
+	);
+};
