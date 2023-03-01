@@ -103,7 +103,7 @@ export const useUpdateQuestion = (surveyId: string) => {
 
 			queryClient.setQueryData<QuestionModel.Question[]>(
 				questionsKey(surveyId),
-				(old) => (old || []).map((q) => q.id === question.id ? result : question)
+				(old) => (old || []).map((q) => q.id === question.id ? result : q)
 			);
 		},
 		onError: (err, { surveyId, question }) => {
