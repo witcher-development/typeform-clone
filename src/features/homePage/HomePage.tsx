@@ -27,7 +27,7 @@ export const HomePage = () => {
 			{surveys.map((survey) => (
 				<div key={survey.id}>
 					<Survey survey={survey} />
-					<button onClick={() => removeSurvey(survey.id)}>Remove</button>
+					<button onClick={() => removeSurvey(survey.id)}>Delete</button>
 				</div>
 			))}
 			<div>

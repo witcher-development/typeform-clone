@@ -57,11 +57,17 @@ const MultiSelectQuestionContent = ({ editorMode, value, onUpdate }: MultiSelect
 	const updateOption = (updatedOption: QuestionContentModel.MultiSelectOption) => {
 		onUpdate(value.map((option) => option.id === updatedOption.id ? updatedOption : option));
 	};
+	const deleteOption = (id: string) => {
+		onUpdate(value.filter((option) => option.id !== id));
+	};
 
 	return (
 		<div>
 			{value.map((option) => (
-				<MultiSelectOption key={option.id} editorMode={editorMode} value={option} onUpdate={updateOption} />
+				<div key={option.id}>
+					<MultiSelectOption key={option.id} editorMode={editorMode} value={option} onUpdate={updateOption} />
+					<button onClick={() => deleteOption(option.id)}>Delete</button>
+				</div>
 			))}
 			{editorMode && (
 				<button
