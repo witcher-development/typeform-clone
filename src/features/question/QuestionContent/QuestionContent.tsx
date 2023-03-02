@@ -49,10 +49,8 @@ const MultiSelectQuestionContent = ({ editorMode, value, onUpdate }: MultiSelect
 
 	return (
 		<div>
-			{value.map((option, index) => (
-				// it should be index, but not ID, because when optimistic update finishes
-				// it will change the ID and re-create component (might lose input focus)
-				<MultiSelectOption editorMode={editorMode} value={option} onUpdate={updateOption} key={index} />
+			{value.map((option) => (
+				<MultiSelectOption key={option.id} editorMode={editorMode} value={option} onUpdate={updateOption} />
 			))}
 			{editorMode && (
 				<button

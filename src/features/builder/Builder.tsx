@@ -20,16 +20,14 @@ export const Builder = ({ surveyId }: Props) => {
 	return (
 		<div>
 			<QuestionTypeSelect onSelect={createQuestion} />
-			{questions.map((question, i) => (
-				// it should be index, but not ID, because when optimistic update finishes
-				// it will change the ID and re-create component (might lose input focus)
-				<div key={i}>
+			{questions.map((question) => (
+				<div key={question.id}>
 					<Question
 						question={question}
 						onUpdate={updateQuestion}
-						onRemove={removeQuestion}
 						editorMode={true}
 					/>
+					<button onClick={() => removeQuestion(question.id)}>Delete</button>
 				</div>
 			))}
 		</div>
