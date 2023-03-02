@@ -72,6 +72,7 @@ export const useUpdateSurvey = (id: string) => {
 		mutationKey: surveysKey(id),
 		onMutate: async ({ survey }) => {
 			// Cancel any outgoing refetches, so they don't overwrite our optimistic update
+			await queryClient.cancelQueries({ queryKey: surveysKey() });
 			await queryClient.cancelQueries({ queryKey: surveysKey(id) });
 
 			// Optimistically update to the new value
