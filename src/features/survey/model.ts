@@ -1,9 +1,12 @@
+import { v4 as uuid } from 'uuid';
+
+
 export type Survey = {
 	id: string;
 	name: string;
 }
-export type NewSurvey = Omit<Survey, 'id'>
 
-export const getNewSurvey = (): NewSurvey => ({
+export const getNewSurvey = (): Survey => ({
+	id: uuid(),
 	name: ''
 });

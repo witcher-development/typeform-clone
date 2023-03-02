@@ -50,7 +50,7 @@ const mapQuestionContentToData = (content: QuestionContentModel.Content) => {
 			throw new Error('Unknown question type while mapping question content to API');
 	}
 };
-const mapNewQuestionToData = ({ id, name, content }: QuestionModel.Question) => ({
+const mapQuestionToData = ({ id, name, content }: QuestionModel.Question) => ({
 	id,
 	name,
 	content: mapQuestionContentToData(content)
@@ -61,15 +61,9 @@ export type CreateProps = {
 	question: QuestionModel.Question;
 }
 export const create = ({ surveyId, question }: CreateProps) =>
-	client.post(url(surveyId), mapNewQuestionToData(question))
+	client.post(url(surveyId), mapQuestionToData(question))
 		.then((res) => mapDataToQuestion(res.data));
 
-
-const mapQuestionToData = ({ id, name, content }: QuestionModel.Question) => ({
-	id,
-	name,
-	content: mapQuestionContentToData(content)
-});
 
 export type UpdateProps = {
 	surveyId: string;

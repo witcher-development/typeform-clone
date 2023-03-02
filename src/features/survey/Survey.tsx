@@ -15,7 +15,7 @@ export const Survey = ({ survey }: Props) => {
 	return (
 		<div>
 			<Link to={`/surveys/${id}`}>
-				<p>{name}</p>
+				<p>{name || '-'}</p>
 			</Link>
 		</div>
 	);

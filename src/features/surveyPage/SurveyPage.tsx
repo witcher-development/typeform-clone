@@ -16,6 +16,11 @@ export const SurveyPage = () => {
 		return <></>;
 	}
 	const { data: survey, status } = SurveyLogic.useGetSurvey(id);
+	const updateSurvey = SurveyLogic.useUpdateSurvey(id);
+
+	const onUpdate = (name: string) => {
+		updateSurvey({ id, name });
+	};
 
 	if (status !== 'success') {
 		return <p>not loaded</p>;
@@ -23,7 +28,7 @@ export const SurveyPage = () => {
 
 	return (
 		<div>
-			{survey.name}
+			<input value={survey.name} onChange={(e) => onUpdate(e.target.value)} />
 			<Builder surveyId={survey.id} />
 		</div>
 	);

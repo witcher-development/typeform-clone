@@ -74,7 +74,7 @@ export const useUpdateQuestion = (surveyId: string) => {
 		onError: () => {
 			// TODO: handle error
 
-			throw new Error('Unhandled question create request error');
+			throw new Error('Unhandled question update request error');
 		},
 	});
 
@@ -118,7 +118,7 @@ export const useRemoveQuestion = (surveyId: string) => {
 
 			// TODO: Additionally show some toast
 		},
-	} as UseMutationOptions<unknown, AxiosError,	QuestionApi.RemoveProps, { questionsBackup: QuestionModel.Question[] }>);
+	} as UseMutationOptions<unknown, AxiosError, QuestionApi.RemoveProps, { questionsBackup: QuestionModel.Question[] }>);
 
 	return (id: string) =>
 		mutate({ surveyId, id });
