@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import * as QuestionContentModel from './model';
 
@@ -29,17 +29,28 @@ type MultiSelectOptionProps = {
 	value: QuestionContentModel.MultiSelectOption;
 	onUpdate: (newValue: QuestionContentModel.MultiSelectOption) => void;
 }
-const MultiSelectOption = ({ editorMode, value, onUpdate }: MultiSelectOptionProps) => (
-	<div>
-		<input
-			type="text"
-			value={value.name}
-			onChange={(e) => onUpdate({ ...value, name: e.target.value })}
-			disabled={!editorMode}
-		/>
-		<input value={value.id} type="checkbox" checked={value.checked} disabled={editorMode} />
-	</div>
-);
+const MultiSelectOption = ({ editorMode, value, onUpdate }: MultiSelectOptionProps) => {
+	const [localName, setLocalName] = useState(value.name);
+	useEffect(() => {
+		setLocalName(value.name);
+	}, [value.name]);
+	const onNameChange = () => {
+		onUpdate({ ...value, name: localName });
+	};
+
+	return (
+		<div>
+			<input
+				type="text"
+				value={localName}
+				onChange={(e) => setLocalName(e.target.value)}
+				onBlur={onNameChange}
+				disabled={!editorMode}
+			/>
+			<input value={value.id} type="checkbox" checked={value.checked} disabled={editorMode} />
+		</div>
+	);
+};
 
 type MultiSelectProps = SubProps<QuestionContentModel.MultiSelectContent>
 const MultiSelectQuestionContent = ({ editorMode, value, onUpdate }: MultiSelectProps) => {
@@ -63,12 +74,12 @@ const MultiSelectQuestionContent = ({ editorMode, value, onUpdate }: MultiSelect
 	);
 };
 
+
 type Props = {
 	editorMode: boolean;
 	content: QuestionContentModel.Content;
 	onUpdate: (newContent: QuestionContentModel.Content) => void;
 }
-
 
 export const QuestionContent = ({ editorMode, content, onUpdate }: Props) => {
 	switch (content.type) {

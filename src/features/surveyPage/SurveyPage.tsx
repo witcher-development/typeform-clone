@@ -20,16 +20,16 @@ export const SurveyPage = () => {
 	const { data: survey, status } = SurveyLogic.useGetSurvey(id);
 	const updateSurvey = SurveyLogic.useUpdateSurvey(id);
 
-	const [surveyName, setSurveyName] = useState('');
+	const [localName, setLocalName] = useState('');
 	useEffect(() => {
 		if (status === 'success') {
-			setSurveyName(survey.name);
+			setLocalName(survey.name);
 		}
 	}, [status, survey]);
 
 	const onUpdate = () => {
-		if (survey?.name === surveyName) return;
-		updateSurvey({ id, name: surveyName });
+		if (survey?.name === localName) return;
+		updateSurvey({ id, name: localName });
 	};
 
 	if (status !== 'success') {
@@ -38,7 +38,7 @@ export const SurveyPage = () => {
 
 	return (
 		<div>
-			<input value={surveyName} onChange={(e) => setSurveyName(e.target.value)} onBlur={onUpdate} />
+			<input value={localName} onChange={(e) => setLocalName(e.target.value)} onBlur={onUpdate} />
 			<Builder surveyId={survey.id} />
 		</div>
 	);

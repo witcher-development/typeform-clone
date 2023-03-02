@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import * as QuestionModel from './model';
 import { QuestionContent } from './QuestionContent';
@@ -20,9 +20,24 @@ export const Question = ({ editorMode, question, onUpdate }: Props) => {
 		});
 	};
 
+	const [localName, setLocalName] = useState(name);
+	useEffect(() => {
+		setLocalName(name);
+	}, [name]);
+	const onNameChange = () => {
+		if (name === localName) return;
+		update({ name: localName });
+	};
+
 	return (
 		<div>
-			<input type="text" disabled={!editorMode} value={name} onChange={(e) => update({ name: e.target.value })} />
+			<input
+				type="text"
+				disabled={!editorMode}
+				value={localName}
+				onChange={(e) => setLocalName(e.target.value)}
+				onBlur={onNameChange}
+			/>
 			<QuestionContent
 				editorMode={editorMode}
 				content={content}
