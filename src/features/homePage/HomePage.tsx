@@ -1,4 +1,7 @@
 import React from 'react';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 
 import { useNavigate } from '@common/Navigation';
 import { SurveyLogic, Survey } from '@survey';
@@ -23,16 +26,20 @@ export const HomePage = () => {
 	}
 
 	return (
-		<div>
-			{surveys.map((survey) => (
-				<div key={survey.id}>
-					<Survey survey={survey} />
-					<button onClick={() => removeSurvey(survey.id)}>Delete</button>
+		<Box padding={2}>
+			<Stack direction="row" alignItems="center" spacing={2}>
+				{surveys.map((survey) => (
+					<Card key={survey.id} variant="outlined" style={{ width: 200, height: 80, padding: 12 }}>
+						<Stack spacing={1} alignItems="center">
+							<Survey survey={survey} />
+							<button onClick={() => removeSurvey(survey.id)}>Delete</button>
+						</Stack>
+					</Card>
+				))}
+				<div>
+					<button onClick={onCreate}>New</button>
 				</div>
-			))}
-			<div>
-				<button onClick={onCreate}>New</button>
-			</div>
-		</div>
+			</Stack>
+		</Box>
 	);
 };

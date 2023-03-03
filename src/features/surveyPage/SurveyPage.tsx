@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { logger } from 'react-query/types/react/logger';
 import {
 	useParams
 } from 'react-router-dom';
+import Stack from '@mui/material/Stack';
 
 import { useNavigate } from '@common/Navigation';
 import { SurveyLogic } from '@survey';
@@ -37,9 +37,12 @@ export const SurveyPage = () => {
 	}
 
 	return (
-		<div>
-			<input value={localName} onChange={(e) => setLocalName(e.target.value)} onBlur={onUpdate} />
+		<Stack spacing={3} padding={2}>
+			<Stack direction="row" spacing={2}>
+				<button onClick={() => redirect('/')}>Back</button>
+				<input value={localName} onChange={(e) => setLocalName(e.target.value)} onBlur={onUpdate} />
+			</Stack>
 			<Builder surveyId={survey.id} />
-		</div>
+		</Stack>
 	);
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Stack from '@mui/material/Stack';
 
 import * as QuestionModel from './model';
 import { QuestionContent } from './QuestionContent';
@@ -30,7 +31,7 @@ export const Question = ({ editorMode, question, onUpdate }: Props) => {
 	};
 
 	return (
-		<div>
+		<Stack spacing={1.5}>
 			<input
 				type="text"
 				disabled={!editorMode}
@@ -43,6 +44,6 @@ export const Question = ({ editorMode, question, onUpdate }: Props) => {
 				content={content}
 				onUpdate={(newContent) => update({ content: newContent })}
 			/>
-		</div>
+		</Stack>
 	);
 };

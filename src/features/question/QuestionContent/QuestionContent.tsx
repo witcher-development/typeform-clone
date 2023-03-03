@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+
 
 import * as QuestionContentModel from './model';
 
@@ -40,6 +43,7 @@ const MultiSelectOption = ({ editorMode, value, onUpdate }: MultiSelectOptionPro
 
 	return (
 		<div>
+			<input value={value.id} type="checkbox" checked={value.checked} disabled={editorMode} />
 			<input
 				type="text"
 				value={localName}
@@ -47,7 +51,6 @@ const MultiSelectOption = ({ editorMode, value, onUpdate }: MultiSelectOptionPro
 				onBlur={onNameChange}
 				disabled={!editorMode}
 			/>
-			<input value={value.id} type="checkbox" checked={value.checked} disabled={editorMode} />
 		</div>
 	);
 };
@@ -62,21 +65,30 @@ const MultiSelectQuestionContent = ({ editorMode, value, onUpdate }: MultiSelect
 	};
 
 	return (
-		<div>
-			{value.map((option) => (
-				<div key={option.id}>
-					<MultiSelectOption key={option.id} editorMode={editorMode} value={option} onUpdate={updateOption} />
-					<button onClick={() => deleteOption(option.id)}>Delete</button>
-				</div>
-			))}
+		<Stack spacing={2}>
+			<Box>
+				{value.map((option) => (
+					<Stack key={option.id} direction="row">
+						<MultiSelectOption
+							key={option.id}
+							editorMode={editorMode}
+							value={option}
+							onUpdate={updateOption}
+						/>
+						<button onClick={() => deleteOption(option.id)}>X</button>
+					</Stack>
+				))}
+			</Box>
 			{editorMode && (
-				<button
-					onClick={() => onUpdate([...value, QuestionContentModel.getEmptyMultiSelectOption()])}
-				>
-					Add option
-				</button>
+				<Box alignSelf="end">
+					<button
+						onClick={() => onUpdate([...value, QuestionContentModel.getEmptyMultiSelectOption()])}
+					>
+						+
+					</button>
+				</Box>
 			)}
-		</div>
+		</Stack>
 	);
 };
 
