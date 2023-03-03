@@ -8,7 +8,14 @@ import * as QuestionApi from './client';
 import { QuestionContentModel } from './QuestionContent';
 
 
-const questionsKey = (surveyId: string, id?: string) => [surveyId, 'questions', id];
+export const questionsKey = (surveyId: string, id?: string) => [surveyId, 'questions', id];
+
+export const setQuestionsData = (surveyId: string, questions: QuestionModel.Question[]) => {
+	queryClient.setQueryData<QuestionModel.Question[]>(
+		questionsKey(surveyId),
+		questions
+	);
+};
 
 export const useGetQuestions = (surveyId: string) =>
 	useQuery(questionsKey(surveyId), () => QuestionApi.getAll(surveyId));
@@ -123,4 +130,3 @@ export const useRemoveQuestion = (surveyId: string) => {
 	return (id: string) =>
 		mutate({ surveyId, id });
 };
-

@@ -3,23 +3,13 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 
-import { useNavigate } from '@common/Navigation';
 import { SurveyLogic, Survey } from '@survey';
 
 
 export const HomePage = () => {
-	const redirect = useNavigate();
-
 	const { data: surveys, status } = SurveyLogic.useGetSurveys();
 	const createSurvey = SurveyLogic.useCreateSurvey();
 	const removeSurvey = SurveyLogic.useRemoveSurvey();
-
-	const onCreate = () => {
-		const { id } = createSurvey();
-		setTimeout(() => {
-			redirect(`/surveys/${id}`);
-		}, 500);
-	};
 
 	if (status !== 'success') {
 		return <p>not loaded</p>;
@@ -37,7 +27,7 @@ export const HomePage = () => {
 					</Card>
 				))}
 				<div>
-					<button onClick={onCreate}>New</button>
+					<button onClick={createSurvey}>New</button>
 				</div>
 			</Stack>
 		</Box>
