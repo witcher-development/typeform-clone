@@ -1,9 +1,11 @@
-import { client } from '@client';
+import { client, ClientError } from '@client';
+
 
 import * as SurveyModel from './model';
 
 
 const url = (id = '') => `/surveys/${id}`;
+
 
 const mapDataToSurveys = (data: any): SurveyModel.Survey[] => data.map(mapDataToSurvey);
 const mapDataToSurvey = (data: any): SurveyModel.Survey => ({
@@ -19,12 +21,33 @@ const mapSurveyToData = ({ id, name }: SurveyModel.Survey) => ({
 	name,
 });
 
+
+export class ConflictError extends ClientError {
+	type = 'ConflictError' as const;
+
+	constructor (msg: string, public newSurvey: SurveyModel.Survey) {
+		super(msg);
+		Object.setPrototypeOf(this, ConflictError.prototype);
+	}
+}
 export type CreateProps = {
 	survey: SurveyModel.Survey;
 }
 export const create = ({ survey }: CreateProps) =>
 	client.post(url(), mapSurveyToData(survey))
-		.then((res) => mapDataToSurvey(res.data));
+		.then((res) => mapDataToSurvey(res.data))
+		.catch((error) => {
+			if (!error.response || error.response?.status !== 409) {
+				throw new ClientError('');
+			}
+
+			const errorData = error.response.data;
+			if (!errorData || !errorData.newId || !errorData.newSurvey) {
+				throw new ClientError('');
+			}
+
+			throw new ConflictError('', mapDataToSurvey(errorData.newSurvey));
+		});
 
 
 export type UpdateProps = {

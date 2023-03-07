@@ -6,10 +6,13 @@ import { MainRouter } from '@router';
 import { queryClient } from '@store';
 
 
+
 export const App = () => (
 	<QueryClientProvider client={queryClient}>
 		<RecoilRoot>
+			{/* <ErrorBoundary> */}
 			<MainRouter />
+			{/* </ErrorBoundary> */}
 		</RecoilRoot>
 	</QueryClientProvider>
 );

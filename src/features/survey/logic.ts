@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import { useMutation, UseMutationOptions, useQuery } from 'react-query';
 
 import { useNavigate } from '@common/Navigation';
@@ -8,7 +7,6 @@ import { QuestionLogic } from '@question';
 
 import * as SurveyModel from './model';
 import * as SurveyApi from './client';
-import { isSurvey } from './validators';
 
 
 const surveysKey = (id?: string) => ['surveys', id];
@@ -30,12 +28,31 @@ export const useGetSurvey = (id: string) => useQuery(
 	}
 );
 
+const handleConflictError = (
+	newSurvey: SurveyModel.Survey,
+	optimisticSurvey: SurveyModel.Survey,
+	redirect: ReturnType<typeof useNavigate>
+) => {
+	queryClient.setQueryData<SurveyModel.Survey[]>(
+		surveysKey(),
+		(old) => (old || []).map((s) => s.id === optimisticSurvey.id ? newSurvey : s)
+	);
+	setSurveyData(newSurvey.id, newSurvey);
+	QuestionLogic.setQuestionsData(newSurvey.id, []);
+	queryClient.removeQueries({ exact: true, queryKey: surveysKey(optimisticSurvey.id) });
+
+	setTimeout(() => {
+		if (window.location.pathname.includes(optimisticSurvey.id)) {
+			redirect(`/surveys/${newSurvey.id}`);
+		}
+	}, 200);
+};
 export const useCreateSurvey = () => {
 	const redirect = useNavigate();
 
 	const { mutate } = useMutation<
 		SurveyModel.Survey,
-		AxiosError,
+		SurveyApi.ConflictError,
 		SurveyApi.CreateProps
 	>({
 		mutationFn: SurveyApi.create,
@@ -55,34 +72,22 @@ export const useCreateSurvey = () => {
 				redirect(`/surveys/${survey.id}`);
 			}, 200);
 		},
-		onError: (err, { survey: optimisticSurvey }) => {
-			if (!err.response || err.response?.status !== 409) {
-				// TODO: handle error
-				return;
-			}
-
-			const errorData = err.response.data;
-			if (!errorData || !errorData.newId || !errorData.newSurvey) {
-				throw new Error('Server didnt send new version of survey after conflict occurred');
-			}
-
-			const { newSurvey } = errorData;
-			if (!isSurvey(newSurvey)) {
-				throw new Error('Version of survey received from server to solve conflict isnt a valid survey');
-			}
-			queryClient.setQueryData<SurveyModel.Survey[]>(
-				surveysKey(),
-				(old) => (old || []).map((s) => s.id === optimisticSurvey.id ? newSurvey : s)
-			);
-			setSurveyData(newSurvey.id, newSurvey);
-			QuestionLogic.setQuestionsData(newSurvey.id, []);
-			queryClient.removeQueries({ exact: true, queryKey: surveysKey(optimisticSurvey.id) });
-
-			setTimeout(() => {
-				if (window.location.pathname.includes(optimisticSurvey.id)) {
-					redirect(`/surveys/${newSurvey.id}`);
+		onError: (error, { survey: optimisticSurvey }) => {
+			switch (error.type) {
+				case 'ConflictError': {
+					handleConflictError(
+						error.newSurvey,
+						optimisticSurvey,
+						redirect
+					);
+					throw error;
 				}
-			}, 200);
+				default: {
+					console.log('UnhandledError');
+					throw error;
+					// TODO: handle general case
+				}
+			}
 		},
 	});
 
@@ -96,7 +101,7 @@ export const useCreateSurvey = () => {
 export const useUpdateSurvey = (id: string) => {
 	const { mutate } = useMutation<
 		SurveyModel.Survey,
-		AxiosError,
+		unknown,
 		SurveyApi.UpdateProps
 	>({
 		mutationFn: SurveyApi.update,
@@ -129,7 +134,7 @@ export const useUpdateSurvey = (id: string) => {
 export const useRemoveSurvey = () => {
 	const { mutate } = useMutation<
 		unknown,
-		AxiosError,
+		unknown,
 		SurveyApi.RemoveProps,
 		{ surveysBackup: SurveyModel.Survey[] }
 	>({
@@ -162,7 +167,7 @@ export const useRemoveSurvey = () => {
 
 			// TODO: Additionally show some toast
 		},
-	} as UseMutationOptions<unknown, AxiosError, SurveyApi.RemoveProps, { surveysBackup: SurveyModel.Survey[] }>);
+	} as UseMutationOptions<unknown, unknown, SurveyApi.RemoveProps, { surveysBackup: SurveyModel.Survey[] }>);
 
 	return (id: string) =>
 		mutate({ id });

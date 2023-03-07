@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ErrorInfo, PropsWithChildren } from 'react';
 import { useParams } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 
@@ -7,7 +7,29 @@ import { SurveyLogic } from '@survey';
 import { Builder } from '@builder';
 
 
-export const SurveyPage = () => {
+class ErrorBoundary extends React.Component<PropsWithChildren<void>> {
+	constructor (props: any) {
+		super(props);
+		this.state = { error: false };
+	}
+
+	static getDerivedStateFromError = () => {
+		return { error: true };
+	};
+
+	componentDidCatch (error: Error, errorInfo: ErrorInfo) {
+		console.log('survey', error.stack);
+		this.setState({
+			error: false
+		});
+	}
+
+	render () {
+		return this.props.children;
+	}
+}
+
+export const $SurveyPage = () => {
 	const { id } = useParams();
 	const redirect = useNavigate();
 	if (!id) {
@@ -44,3 +66,9 @@ export const SurveyPage = () => {
 		</Stack>
 	);
 };
+
+export const SurveyPage = () => (
+	<ErrorBoundary>
+		<$SurveyPage />
+	</ErrorBoundary>
+);
