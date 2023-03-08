@@ -11,6 +11,7 @@ module.exports = function override (config) {
 		'@home': 'src/features/homePage',
 		'@client': 'src/client.ts',
 		'@store': 'src/store.ts',
+		'@analytics': 'src/analytics',
 		'@router': 'src/router',
 		'@env': 'src/env.ts',
 	})(config);

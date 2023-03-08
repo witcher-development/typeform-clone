@@ -4,6 +4,7 @@
     "paths": {
       "@client": ["./client"],
       "@router": ["./router"],
+      "@analytics": ["./analytics"],
       "@env": ["./env.ts"],
       "@store": ["./store.ts"],
       "@common/*": ["./features/common/*"],

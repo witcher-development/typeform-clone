@@ -1,4 +1,4 @@
-import { client, ClientError } from '@client';
+import { client, CustomError, isClientError } from '@client';
 
 
 import * as SurveyModel from './model';
@@ -22,7 +22,7 @@ const mapSurveyToData = ({ id, name }: SurveyModel.Survey) => ({
 });
 
 
-export class ConflictError extends ClientError {
+export class ConflictError extends CustomError {
 	type = 'ConflictError' as const;
 
 	constructor (msg: string, public newSurvey: SurveyModel.Survey) {
@@ -37,16 +37,11 @@ export const create = ({ survey }: CreateProps) =>
 	client.post(url(), mapSurveyToData(survey))
 		.then((res) => mapDataToSurvey(res.data))
 		.catch((error) => {
-			if (!error.response || error.response?.status !== 409) {
-				throw new ClientError('');
+			if (!isClientError(error) || !error.response || error.response.status !== 409) {
+				throw error;
 			}
 
-			const errorData = error.response.data;
-			if (!errorData || !errorData.newId || !errorData.newSurvey) {
-				throw new ClientError('');
-			}
-
-			throw new ConflictError('', mapDataToSurvey(errorData.newSurvey));
+			throw new ConflictError('', mapDataToSurvey(error.response.data.newSurvey));
 		});
 
 

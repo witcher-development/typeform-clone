@@ -75,27 +75,23 @@ export const useCreateSurvey = () => {
 		onError: (error, { survey: optimisticSurvey }) => {
 			switch (error.type) {
 				case 'ConflictError': {
-					handleConflictError(
+					return handleConflictError(
 						error.newSurvey,
 						optimisticSurvey,
 						redirect
 					);
-					throw error;
 				}
 				default: {
-					console.log('UnhandledError');
-					throw error;
+					console.log('UnhandledError', error);
 					// TODO: handle general case
 				}
 			}
+			throw error;
 		},
 	});
 
 	const survey = SurveyModel.getNewSurvey();
-	return () => {
-		mutate({ survey });
-		return survey;
-	};
+	return () => mutate({ survey });
 };
 
 export const useUpdateSurvey = (id: string) => {
